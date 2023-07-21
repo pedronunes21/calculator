@@ -9,10 +9,12 @@ import {
 import { Background } from "./Background";
 import { Airplane } from "./Airplane";
 import { Cloud } from "./Cloud";
-import { useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { TextSection } from "./TextSection";
+import { gsap } from "gsap";
+import { fadeOnBeforeCompile } from "../utils/fadeMaterial";
 
 export const Experience = () => {
   function random(min, max) {
@@ -46,9 +48,9 @@ export const Experience = () => {
   const textSections = useMemo(() => {
     return [
       {
-        cameraRailDist: -1,
+        cameraRailDist: -5,
         position: new THREE.Vector3(
-          curvePoints[1].x - 3,
+          curvePoints[1].x + 5,
           curvePoints[1].y,
           curvePoints[1].z
         ),
@@ -56,9 +58,9 @@ export const Experience = () => {
 Have a seat and enjoy the ride!`,
       },
       {
-        cameraRailDist: 1.5,
+        cameraRailDist: 5,
         position: new THREE.Vector3(
-          curvePoints[2].x - 2,
+          curvePoints[2].x - 5,
           curvePoints[2].y,
           curvePoints[2].z
         ),
@@ -67,9 +69,9 @@ Have a seat and enjoy the ride!`,
 We have a wide range of beverages!`,
       },
       {
-        cameraRailDist: -1,
+        cameraRailDist: -5,
         position: new THREE.Vector3(
-          curvePoints[3].x - 3,
+          curvePoints[3].x + 5,
           curvePoints[3].y,
           curvePoints[3].z
         ),
@@ -77,9 +79,9 @@ We have a wide range of beverages!`,
         subtitle: `Our flight attendants will help you have a great journey`,
       },
       {
-        cameraRailDist: 1.5,
+        cameraRailDist: 5,
         position: new THREE.Vector3(
-          curvePoints[4].x + 3.5,
+          curvePoints[4].x - 5,
           curvePoints[4].y,
           curvePoints[4].z - 12
         ),
@@ -88,6 +90,206 @@ We have a wide range of beverages!`,
       },
     ];
   });
+
+  const clouds = useMemo(
+    () => [
+      // STARTING
+      {
+        position: new THREE.Vector3(-3.5, -3.2, -7),
+      },
+      {
+        position: new THREE.Vector3(3.5, -4, -10),
+      },
+      {
+        scale: new THREE.Vector3(4, 4, 4),
+        position: new THREE.Vector3(-18, 0.2, -68),
+        rotation: new THREE.Euler(-Math.PI / 5, Math.PI / 6, 0),
+      },
+      {
+        scale: new THREE.Vector3(2.5, 2.5, 2.5),
+        position: new THREE.Vector3(10, -1.2, -52),
+      },
+      // FIRST POINT
+      {
+        scale: new THREE.Vector3(4, 4, 4),
+        position: new THREE.Vector3(
+          curvePoints[1].x + 10,
+          curvePoints[1].y - 4,
+          curvePoints[1].z + 64
+        ),
+      },
+      {
+        scale: new THREE.Vector3(3, 3, 3),
+        position: new THREE.Vector3(
+          curvePoints[1].x - 20,
+          curvePoints[1].y + 4,
+          curvePoints[1].z + 28
+        ),
+        rotation: new THREE.Euler(0, Math.PI / 7, 0),
+      },
+      {
+        rotation: new THREE.Euler(0, Math.PI / 7, Math.PI / 5),
+        scale: new THREE.Vector3(5, 5, 5),
+        position: new THREE.Vector3(
+          curvePoints[1].x - 13,
+          curvePoints[1].y + 4,
+          curvePoints[1].z - 62
+        ),
+      },
+      {
+        rotation: new THREE.Euler(Math.PI / 2, Math.PI / 2, Math.PI / 3),
+        scale: new THREE.Vector3(5, 5, 5),
+        position: new THREE.Vector3(
+          curvePoints[1].x + 54,
+          curvePoints[1].y + 2,
+          curvePoints[1].z - 82
+        ),
+      },
+      {
+        scale: new THREE.Vector3(5, 5, 5),
+        position: new THREE.Vector3(
+          curvePoints[1].x + 8,
+          curvePoints[1].y - 14,
+          curvePoints[1].z - 22
+        ),
+      },
+      // SECOND POINT
+      {
+        scale: new THREE.Vector3(3, 3, 3),
+        position: new THREE.Vector3(
+          curvePoints[2].x + 6,
+          curvePoints[2].y - 7,
+          curvePoints[2].z + 50
+        ),
+      },
+      {
+        scale: new THREE.Vector3(2, 2, 2),
+        position: new THREE.Vector3(
+          curvePoints[2].x - 2,
+          curvePoints[2].y + 4,
+          curvePoints[2].z - 26
+        ),
+      },
+      {
+        scale: new THREE.Vector3(4, 4, 4),
+        position: new THREE.Vector3(
+          curvePoints[2].x + 12,
+          curvePoints[2].y + 1,
+          curvePoints[2].z - 86
+        ),
+        rotation: new THREE.Euler(Math.PI / 4, 0, Math.PI / 3),
+      },
+      // THIRD POINT
+      {
+        scale: new THREE.Vector3(3, 3, 3),
+        position: new THREE.Vector3(
+          curvePoints[3].x + 3,
+          curvePoints[3].y - 10,
+          curvePoints[3].z + 50
+        ),
+      },
+      {
+        scale: new THREE.Vector3(3, 3, 3),
+        position: new THREE.Vector3(
+          curvePoints[3].x - 10,
+          curvePoints[3].y,
+          curvePoints[3].z + 30
+        ),
+        rotation: new THREE.Euler(Math.PI / 4, 0, Math.PI / 5),
+      },
+      {
+        scale: new THREE.Vector3(4, 4, 4),
+        position: new THREE.Vector3(
+          curvePoints[3].x - 20,
+          curvePoints[3].y - 5,
+          curvePoints[3].z - 8
+        ),
+        rotation: new THREE.Euler(Math.PI, 0, Math.PI / 5),
+      },
+      {
+        scale: new THREE.Vector3(5, 5, 5),
+        position: new THREE.Vector3(
+          curvePoints[3].x + 0,
+          curvePoints[3].y - 5,
+          curvePoints[3].z - 98
+        ),
+        rotation: new THREE.Euler(0, Math.PI / 3, 0),
+      },
+      // FOURTH POINT
+      {
+        scale: new THREE.Vector3(2, 2, 2),
+        position: new THREE.Vector3(
+          curvePoints[4].x + 3,
+          curvePoints[4].y - 10,
+          curvePoints[4].z + 2
+        ),
+      },
+      {
+        scale: new THREE.Vector3(3, 3, 3),
+        position: new THREE.Vector3(
+          curvePoints[4].x + 24,
+          curvePoints[4].y - 6,
+          curvePoints[4].z - 42
+        ),
+        rotation: new THREE.Euler(Math.PI / 4, 0, Math.PI / 5),
+      },
+      {
+        scale: new THREE.Vector3(3, 3, 3),
+        position: new THREE.Vector3(
+          curvePoints[4].x - 4,
+          curvePoints[4].y + 9,
+          curvePoints[4].z - 62
+        ),
+        rotation: new THREE.Euler(Math.PI / 3, 0, Math.PI / 3),
+      },
+      // FINAL
+      {
+        scale: new THREE.Vector3(3, 3, 3),
+        position: new THREE.Vector3(
+          curvePoints[5].x + 12,
+          curvePoints[5].y - 5,
+          curvePoints[5].z + 60
+        ),
+        rotation: new THREE.Euler(-Math.PI / 4, -Math.PI / 6, 0),
+      },
+      {
+        scale: new THREE.Vector3(3, 3, 3),
+        position: new THREE.Vector3(
+          curvePoints[5].x - 12,
+          curvePoints[5].y + 5,
+          curvePoints[5].z + 120
+        ),
+        rotation: new THREE.Euler(Math.PI / 4, Math.PI / 6, 0),
+      },
+      {
+        scale: new THREE.Vector3(2, 2, 2),
+        position: new THREE.Vector3(
+          curvePoints[6].x + 3,
+          curvePoints[6].y - 10,
+          curvePoints[6].z + 2
+        ),
+      },
+      {
+        scale: new THREE.Vector3(3, 3, 3),
+        position: new THREE.Vector3(
+          curvePoints[6].x + 24,
+          curvePoints[6].y - 6,
+          curvePoints[6].z - 42
+        ),
+        rotation: new THREE.Euler(Math.PI / 4, 0, Math.PI / 5),
+      },
+      {
+        scale: new THREE.Vector3(3, 3, 3),
+        position: new THREE.Vector3(
+          curvePoints[6].x - 4,
+          curvePoints[6].y + 9,
+          curvePoints[6].z - 62
+        ),
+        rotation: new THREE.Euler(Math.PI / 3, 0, Math.PI / 3),
+      },
+    ],
+    []
+  );
 
   const linePoints = useMemo(() => {
     return curve.getPoints(LINE_NB_POINTS);
@@ -104,18 +306,22 @@ We have a wide range of beverages!`,
   const cameraGroup = useRef();
   const cameraRail = useRef();
   const scroll = useScroll();
+  const lastScroll = useRef(0);
 
   useFrame((_frame, delta) => {
     const scrollOffset = Math.max(0, scroll.offset);
 
-    // Look to close text sections
+    let friction = 1;
     let resetCameraRail = true;
+
+    // Look to close text sections
     textSections.forEach((textSection) => {
       const distance = textSection.position.distanceTo(
         cameraGroup.current.position
       );
 
       if (distance < FRICTION_DISTANCE) {
+        friction = Math.max(distance / FRICTION_DISTANCE, 0.1);
         const targetCameraRailPosition = new THREE.Vector3(
           (1 - distance / FRICTION_DISTANCE) * textSection.cameraRailDist,
           0,
@@ -132,14 +338,29 @@ We have a wide range of beverages!`,
       cameraRail.current.position.lerp(targetCameraRailPosition, delta);
     }
 
-    const curPoint = curve.getPoint(scrollOffset);
+    // Calculate lerped scroll offset
+    let lerpedScrollOffset = THREE.MathUtils.lerp(
+      lastScroll.current,
+      scrollOffset,
+      delta * friction
+    );
+
+    // Protect below 0 and above 1
+    lerpedScrollOffset = Math.min(lerpedScrollOffset, 1);
+    lerpedScrollOffset = Math.max(lerpedScrollOffset, 0);
+
+    lastScroll.current = lerpedScrollOffset;
+
+    tl.current.seek(lerpedScrollOffset * tl.current.duration());
+
+    const curPoint = curve.getPoint(lerpedScrollOffset);
 
     // Follow the curve points
     cameraGroup.current.position.lerp(curPoint, delta * 24);
 
     // Make the group look ahead on the curve
     const lookAtPoint = curve.getPoint(
-      Math.min(scrollOffset + CURVE_AHEAD_CAMERA, 1)
+      Math.min(lerpedScrollOffset + CURVE_AHEAD_CAMERA, 1)
     );
 
     const currentLookAt = cameraGroup.current.getWorldDirection(
@@ -156,7 +377,7 @@ We have a wide range of beverages!`,
     );
 
     // Airplane rotation
-    const tangent = curve.getTangent(scrollOffset + CURVE_AHEAD_AIRPLANE);
+    const tangent = curve.getTangent(lerpedScrollOffset + CURVE_AHEAD_AIRPLANE);
 
     const nonLerpLookAt = new THREE.Group();
     nonLerpLookAt.position.copy(curPoint);
@@ -198,12 +419,38 @@ We have a wide range of beverages!`,
 
   const airplane = useRef();
 
+  const tl = useRef();
+  const backgroundColors = useRef({
+    colorA: "#3535cc",
+    colorB: "#abaadd",
+  });
+
+  useLayoutEffect(() => {
+    tl.current = gsap.timeline();
+
+    tl.current.to(backgroundColors.current, {
+      duration: 1,
+      colorA: "#6f35cc",
+      colorB: "#ffad30",
+    });
+    tl.current.to(backgroundColors.current, {
+      duration: 1,
+      colorA: "#424242",
+      colorB: "#ffcc00",
+    });
+    tl.current.to(backgroundColors.current, {
+      duration: 1,
+      colorA: "#81318b",
+      colorB: "#55ab8f",
+    });
+  }, []);
+
   return (
     <>
       <directionalLight position={[0, 3, 1]} intensity={0.1} />
       {/* <OrbitControls enableZoom /> */}
       <group ref={cameraGroup}>
-        <Background />
+        <Background backgroundColors={backgroundColors} />
         <group ref={cameraRail}>
           <PerspectiveCamera position={[0, 0, 35]} fov={30} makeDefault />
         </group>
@@ -216,11 +463,6 @@ We have a wide range of beverages!`,
             />
           </Float>
         </group>
-        {/* {[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1].map((v,i) => {
-        const scale = random(.4, 1)
-        return <Cloud key={i} opacity={random(.3, .9)} position={[0, 0, -45]} scale={[scale,scale,scale]} />
-        }
-      )} */}
       </group>
 
       {textSections.map((textSection, i) => (
@@ -245,9 +487,14 @@ We have a wide range of beverages!`,
             opacity={1}
             transparent
             envMapIntensity={2}
+            onBeforeCompile={fadeOnBeforeCompile}
           />
         </mesh>
       </group>
+
+      {clouds.map((cloud, i) => (
+        <Cloud {...cloud} key={i} />
+      ))}
     </>
   );
 };
