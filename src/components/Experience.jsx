@@ -9,12 +9,14 @@ import {
 import { Background } from "./Background";
 import { Airplane } from "./Airplane";
 import { Cloud } from "./Cloud";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { TextSection } from "./TextSection";
 import { gsap } from "gsap";
 import { fadeOnBeforeCompile } from "../utils/fadeMaterial";
+import { usePlay } from "../contexts/Play";
+import { Speed } from "./Speeds";
 
 export const Experience = () => {
   function random(min, max) {
@@ -48,28 +50,28 @@ export const Experience = () => {
   const textSections = useMemo(() => {
     return [
       {
-        cameraRailDist: -5,
+        cameraRailDist: 8,
         position: new THREE.Vector3(
           curvePoints[1].x + 5,
           curvePoints[1].y,
           curvePoints[1].z
         ),
-        subtitle: `Welcomo to Atmos,
-Have a seat and enjoy the ride!`,
+        title: "Welcome to Atmos",
+        subtitle: `Have a seat and enjoy the ride!`,
       },
       {
-        cameraRailDist: 5,
+        cameraRailDist: -8,
         position: new THREE.Vector3(
-          curvePoints[2].x - 5,
+          curvePoints[2].x - 10,
           curvePoints[2].y,
-          curvePoints[2].z
+          curvePoints[2].z + 20
         ),
         title: "Services",
         subtitle: `Do you want a drink?
 We have a wide range of beverages!`,
       },
       {
-        cameraRailDist: -5,
+        cameraRailDist: 8,
         position: new THREE.Vector3(
           curvePoints[3].x + 5,
           curvePoints[3].y,
@@ -79,11 +81,11 @@ We have a wide range of beverages!`,
         subtitle: `Our flight attendants will help you have a great journey`,
       },
       {
-        cameraRailDist: 5,
+        cameraRailDist: -8,
         position: new THREE.Vector3(
-          curvePoints[4].x - 5,
+          curvePoints[4].x - 10,
           curvePoints[4].y,
-          curvePoints[4].z - 12
+          curvePoints[4].z
         ),
         title: "Movies",
         subtitle: `We provide a large selection of medias, we highly recommend you Porco Rosso during the flight`,
@@ -95,10 +97,20 @@ We have a wide range of beverages!`,
     () => [
       // STARTING
       {
-        position: new THREE.Vector3(-3.5, -3.2, -7),
+        scale: new THREE.Vector3(4, 4, 4),
+        position: new THREE.Vector3(
+          curvePoints[0].x + 5,
+          curvePoints[0].y,
+          curvePoints[0].z - 50
+        ),
       },
       {
-        position: new THREE.Vector3(3.5, -4, -10),
+        scale: new THREE.Vector3(4, 4, 4),
+        position: new THREE.Vector3(
+          curvePoints[0].x + 40,
+          curvePoints[0].y,
+          curvePoints[0].z - 50
+        ),
       },
       {
         scale: new THREE.Vector3(4, 4, 4),
@@ -192,7 +204,7 @@ We have a wide range of beverages!`,
         scale: new THREE.Vector3(3, 3, 3),
         position: new THREE.Vector3(
           curvePoints[3].x - 10,
-          curvePoints[3].y,
+          curvePoints[3].y + 15,
           curvePoints[3].z + 30
         ),
         rotation: new THREE.Euler(Math.PI / 4, 0, Math.PI / 5),
@@ -291,9 +303,8 @@ We have a wide range of beverages!`,
     []
   );
 
-  const linePoints = useMemo(() => {
-    return curve.getPoints(LINE_NB_POINTS);
-  }, [curve]);
+  const sceneOpacity = useRef(0);
+  const lineMaterialRef = useRef();
 
   const shape = useMemo(() => {
     const shape = new THREE.Shape();
@@ -305,10 +316,45 @@ We have a wide range of beverages!`,
 
   const cameraGroup = useRef();
   const cameraRail = useRef();
+  const camera = useRef();
   const scroll = useScroll();
   const lastScroll = useRef(0);
 
+  const { play, setHasScroll, end, setEnd } = usePlay();
+
   useFrame((_frame, delta) => {
+    if (window.innerWidth > window.innerHeight) {
+      camera.current.fov = 30;
+      camera.current.position.z = 35;
+    } else {
+      camera.current.fov = 80;
+      camera.current.position.z = 20;
+    }
+
+    if (lastScroll.current <= 0 && scroll.offset > 0) {
+      setHasScroll(true);
+    }
+
+    if (play && !end && sceneOpacity.current < 1) {
+      sceneOpacity.current = THREE.MathUtils.lerp(
+        sceneOpacity.current,
+        1,
+        delta * 0.1
+      );
+    }
+
+    if (end && sceneOpacity.current > 0) {
+      sceneOpacity.current = THREE.MathUtils.lerp(
+        sceneOpacity.current,
+        0,
+        delta
+      );
+    }
+
+    lineMaterialRef.current.opacity = sceneOpacity.current;
+
+    if (end) return;
+
     const scrollOffset = Math.max(0, scroll.offset);
 
     let friction = 1;
@@ -415,15 +461,27 @@ We have a wide range of beverages!`,
     );
 
     airplane.current.quaternion.slerp(targetAirplaneQuaternion, delta * 2);
+
+    if (
+      cameraGroup.current.position.z <
+      curvePoints[curvePoints.length - 1].z + 100
+    ) {
+      setEnd(true);
+      planeOutTl.current.play();
+    }
   });
 
   const airplane = useRef();
+  console.log(airplane);
 
   const tl = useRef();
   const backgroundColors = useRef({
     colorA: "#3535cc",
     colorB: "#abaadd",
   });
+
+  const planeInTl = useRef();
+  const planeOutTl = useRef();
 
   useLayoutEffect(() => {
     tl.current = gsap.timeline();
@@ -443,58 +501,110 @@ We have a wide range of beverages!`,
       colorA: "#81318b",
       colorB: "#55ab8f",
     });
+
+    tl.current.pause();
+
+    planeInTl.current = gsap.timeline();
+    planeInTl.current.pause();
+    planeInTl.current.from(airplane.current.position, {
+      duration: 3,
+      z: 50,
+      y: -10,
+    });
+
+    planeOutTl.current = gsap.timeline();
+    planeOutTl.current.pause();
+
+    planeOutTl.current.to(
+      airplane.current.position,
+      {
+        duration: 10,
+        z: -250,
+        y: 10,
+      },
+      0
+    );
+    planeOutTl.current.to(
+      cameraRail.current.position,
+      {
+        duration: 8,
+        y: 30,
+      },
+      0
+    );
+
+    planeOutTl.current.to(airplane.current.position, {
+      duration: 1,
+      z: -1000,
+    });
   }, []);
 
-  return (
-    <>
-      <directionalLight position={[0, 3, 1]} intensity={0.1} />
-      {/* <OrbitControls enableZoom /> */}
-      <group ref={cameraGroup}>
-        <Background backgroundColors={backgroundColors} />
-        <group ref={cameraRail}>
-          <PerspectiveCamera position={[0, 0, 35]} fov={30} makeDefault />
-        </group>
-        <group ref={airplane}>
-          <Float floatIntensity={1} speed={1.5} rotationIntensity={0.5}>
-            <Airplane
-              rotation={[0, Math.PI / 2, 0]}
-              scale={[2, 2, 2]}
-              position={[0, 0.1, 0]}
+  useEffect(() => {
+    if (play) {
+      planeInTl.current.play();
+    }
+  }, [play]);
+
+  return useMemo(
+    () => (
+      <>
+        <directionalLight position={[0, 3, 1]} intensity={0.1} />
+        {/* <OrbitControls enableZoom /> */}
+        <group ref={cameraGroup}>
+          <Speed />
+          <Background backgroundColors={backgroundColors} />
+          <group ref={cameraRail}>
+            <PerspectiveCamera
+              ref={camera}
+              position={[0, 0, 35]}
+              fov={30}
+              makeDefault
             />
-          </Float>
+          </group>
+          <group ref={airplane}>
+            <Float floatIntensity={1} speed={1.5} rotationIntensity={0.5}>
+              <Airplane
+                rotation={[0, Math.PI / 2, 0]}
+                scale={[2, 2, 2]}
+                position={[0, 0.1, 0]}
+              />
+            </Float>
+          </group>
         </group>
-      </group>
 
-      {textSections.map((textSection, i) => (
-        <TextSection {...textSection} key={i} />
-      ))}
+        {textSections.map((textSection, i) => (
+          <TextSection {...textSection} key={i} />
+        ))}
 
-      {/* LINE */}
-      <group position={[0, -2, 0]}>
-        <mesh>
-          <extrudeGeometry
-            args={[
-              shape,
-              {
-                steps: LINE_NB_POINTS,
-                bevelEnabled: false,
-                extrudePath: curve,
-              },
-            ]}
-          />
-          <meshStandardMaterial
-            color="white"
-            opacity={1}
-            transparent
-            envMapIntensity={2}
-            onBeforeCompile={fadeOnBeforeCompile}
-          />
-        </mesh>
-      </group>
+        {/* LINE */}
+        <group position={[0, -2, 0]}>
+          <mesh>
+            <extrudeGeometry
+              args={[
+                shape,
+                {
+                  steps: LINE_NB_POINTS,
+                  bevelEnabled: false,
+                  extrudePath: curve,
+                },
+              ]}
+            />
+            <meshStandardMaterial
+              color="white"
+              ref={lineMaterialRef}
+              opacity={1}
+              transparent
+              envMapIntensity={2}
+              onBeforeCompile={fadeOnBeforeCompile}
+            />
+          </mesh>
+        </group>
 
-      {clouds.map((cloud, i) => (
-        <Cloud {...cloud} key={i} />
-      ))}
-    </>
+        {clouds.map((cloud, i) => (
+          <Cloud sceneOpacity={sceneOpacity} {...cloud} key={i} />
+        ))}
+      </>
+    ),
+    []
   );
 };
