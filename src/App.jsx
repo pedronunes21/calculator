@@ -5,6 +5,8 @@ import { EffectComposer, Noise } from "@react-three/postprocessing";
 import { Overlay } from "./components/Overlay";
 import { usePlay } from "./contexts/Play";
 import { useMemo } from "react";
+import { About } from "./components/About";
+import { Tests } from "./components/Tests";
 // 22:50
 function App() {
   const { play, end } = usePlay();
@@ -21,7 +23,7 @@ function App() {
   return (
     <>
       <Canvas>
-        <color attach="background" args={["#ececec"]} />
+        {/* <color attach="background" args={["#ececec"]} />
         <ScrollControls
           pages={play && !end ? 20 : 0}
           damping={0.5}
@@ -38,9 +40,18 @@ function App() {
         >
           {effects}
           <Experience />
-        </ScrollControls>
+        </ScrollControls> */}
+
+        <Tests />
       </Canvas>
-      <Overlay />
+      {/* <div className="test-overlay">
+        <h1>Título</h1>
+      </div>
+
+      <div className="section2">
+        <h1>Título</h1>
+      </div> */}
+      {/* <Overlay /> */}
     </>
   );
 }
