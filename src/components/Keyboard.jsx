@@ -14,6 +14,7 @@ export function Keyboard({ calculatorRef, ...props }) {
         <group ref={calculatorRef} position={[-209.773, -18.858, 990.665]}>
           <group
             value="CE"
+            type="clear"
             position={[-189.567, 38.858, -252.935]}
             scale={[1.009, 1, 1]}
           >
@@ -34,6 +35,7 @@ export function Keyboard({ calculatorRef, ...props }) {
 
           <group
             value="="
+            type="submit"
             position={[188.163, 38.858, 250.449]}
             rotation={[0, Math.PI / 2, 0]}
             scale={[1.015, 1, 1]}
@@ -57,6 +59,7 @@ export function Keyboard({ calculatorRef, ...props }) {
 
           <group
             value="0"
+            type="number"
             position={[-188.987, 38.858, 251.365]}
             scale={[1.009, 1, 1]}
           >
@@ -76,7 +79,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="." position={[62.671, 38.858, 251.365]}>
+          <group value="." type="point" position={[62.671, 38.858, 251.365]}>
             <mesh
               geometry={nodes["Text-ABC_3"].geometry}
               material={nodes["Text-ABC_3"].material}
@@ -93,7 +96,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#E3E3E3" />
             </mesh>
           </group>
-          <group value="*" position={[188.163, 38.858, 0.283]}>
+          <group value="*" type="operation" position={[188.163, 38.858, 0.283]}>
             <mesh
               geometry={nodes["Text-ABC_4"].geometry}
               material={nodes["Text-ABC_4"].material}
@@ -110,7 +113,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#E3E3E3" />
             </mesh>
           </group>
-          <group value="3" position={[62.671, 38.858, 124.775]}>
+          <group value="3" type="number" position={[62.671, 38.858, 124.775]}>
             <mesh
               geometry={nodes["key-base_5"].geometry}
               material={nodes["key-base_5"].material}
@@ -127,7 +130,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="6" position={[62.671, 38.858, 0.283]}>
+          <group value="6" type="number" position={[62.671, 38.858, 0.283]}>
             <mesh
               geometry={nodes["key-base_6"].geometry}
               material={nodes["key-base_6"].material}
@@ -144,7 +147,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="2" position={[-64.077, 38.858, 125.773]}>
+          <group value="2" type="number" position={[-64.077, 38.858, 125.773]}>
             <mesh
               geometry={nodes["key-base_7"].geometry}
               material={nodes["key-base_7"].material}
@@ -161,7 +164,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="5" position={[-64.077, 38.858, 0.283]}>
+          <group value="5" type="number" position={[-64.077, 38.858, 0.283]}>
             <mesh
               geometry={nodes["Text-ABC_8"].geometry}
               material={nodes["Text-ABC_8"].material}
@@ -178,7 +181,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#E3E3E3" />
             </mesh>
           </group>
-          <group value="1" position={[-189.567, 38.858, 124.775]}>
+          <group value="1" type="number" position={[-189.567, 38.858, 124.775]}>
             <mesh
               geometry={nodes["key-base_9"].geometry}
               material={nodes["key-base_9"].material}
@@ -195,7 +198,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="4" position={[-189.567, 38.858, 0.283]}>
+          <group value="4" type="number" position={[-189.567, 38.858, 0.283]}>
             <mesh
               geometry={nodes["key-base_10"].geometry}
               material={nodes["key-base_10"].material}
@@ -212,7 +215,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="/" position={[188.161, 38.858, -127.445]}>
+          <group value="/" type="operation" position={[188.161, 38.858, -127.445]}>
             <mesh
               geometry={nodes["key-base_11"].geometry}
               material={nodes["key-base_11"].material}
@@ -229,7 +232,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="-" position={[188.163, 38.858, -252.935]}>
+          <group value="-" type="operation" position={[188.163, 38.858, -252.935]}>
             <mesh
               geometry={nodes["key-base_12"].geometry}
               material={nodes["key-base_12"].material}
@@ -246,7 +249,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="9" position={[62.671, 38.858, -128.445]}>
+          <group value="9" type="number" position={[62.671, 38.858, -128.445]}>
             <mesh
               geometry={nodes["key-base_13"].geometry}
               material={nodes["key-base_13"].material}
@@ -263,7 +266,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="+" position={[62.671, 38.858, -252.935]}>
+          <group value="+" type="operation" position={[62.671, 38.858, -252.935]}>
             <mesh
               geometry={nodes["key-base_14"].geometry}
               material={nodes["key-base_14"].material}
@@ -280,7 +283,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="8" position={[-64.077, 38.858, -127.445]}>
+          <group value="8" type="number" position={[-64.077, 38.858, -127.445]}>
             <mesh
               geometry={nodes["key-base_15"].geometry}
               material={nodes["key-base_15"].material}
@@ -297,7 +300,7 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <group value="7" position={[-189.567, 38.858, -128.445]}>
+          <group value="7" type="number" position={[-189.567, 38.858, -128.445]}>
             <mesh
               geometry={nodes["key-base_16"].geometry}
               material={nodes["key-base_16"].material}
@@ -314,14 +317,16 @@ export function Keyboard({ calculatorRef, ...props }) {
               <meshStandardMaterial color="#404040" />
             </mesh>
           </group>
-          <mesh
-            geometry={nodes.base.geometry}
-            material={nodes.base.material}
-            position={[0, 0.718, 0]}
-            rotation={[-Math.PI / 2, 0, 0]}
-          >
-            <meshStandardMaterial color="#525252" />
-          </mesh>
+          <group nonClickable>
+            <mesh
+              geometry={nodes.base.geometry}
+              material={nodes.base.material}
+              position={[0, 0.718, 0]}
+              rotation={[-Math.PI / 2, 0, 0]}
+            >
+              <meshStandardMaterial color="#525252" />
+            </mesh>
+          </group>
         </group>
         <PerspectiveCamera
           makeDefault={false}

@@ -8,8 +8,12 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { gsap } from "gsap";
 import { Keyboard } from "./Keyboard";
+import { useExpression } from "../contexts/Expression";
 
 export const Tests = () => {
+
+  const { expression, setExpression } = useExpression()
+
   const backgroundColors = useRef({
     colorA: "#3535cc",
     colorB: "#abaadd",
@@ -18,11 +22,25 @@ export const Tests = () => {
   const camera = useRef();
   const calculatorRef = useRef();
   const pointer = new THREE.Vector2();
-  const raycaster = new THREE.Raycaster();
+  let raycaster = new THREE.Raycaster();
 
   function onPointerMove(event) {
+
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // raycaster.setFromCamera(pointer, camera.current);
+    // const intersects = raycaster.intersectObjects(
+    //   calculatorRef.current.children
+    // );
+
+    // if (intersects.length > 0) {
+    //   document.querySelector("body").style.cursor = "pointer"
+    // } else {
+    //   document.querySelector("body").style.cursor = "default"
+
+    // }
+
   }
 
   window.addEventListener("pointermove", onPointerMove);
@@ -42,21 +60,44 @@ export const Tests = () => {
     keyClickedIndex = undefined;
   }
 
+  let expressionString = ""
+
   function pressKey() {
     raycaster.setFromCamera(pointer, camera.current);
     const intersects = raycaster.intersectObjects(
       calculatorRef.current.children
     );
 
+
+
     if (intersects.length > 0) {
-      keyClickedIndex = calculatorRef.current.children.findIndex(
-        (mesh) => mesh.uuid === intersects[0].object.parent.uuid
-      );
-      tl.current.to(calculatorRef.current.children[keyClickedIndex].position, {
-        duration: 0.1,
-        y: 10,
-      });
-      tl.current.play();
+      if (!intersects[0].object.parent.nonClickable) {
+        keyClickedIndex = calculatorRef.current.children.findIndex(
+          (mesh) => mesh.uuid === intersects[0].object.parent.uuid
+        );
+
+        const keyClicked = calculatorRef.current.children[keyClickedIndex]
+
+        tl.current.to(keyClicked.position, {
+          duration: 0.1,
+          y: 10,
+        });
+        tl.current.play();
+
+        switch (keyClicked.type) {
+          case "number": {
+            expressionString += keyClicked.value;
+          }
+          case "operation": {
+            if (expressionString === "") {
+              console.log("Erro")
+            } else {
+              console.log(keyClicked.value)
+            }
+          }
+        }
+        console.log(expressionString)
+      }
     }
   }
 
@@ -70,6 +111,7 @@ export const Tests = () => {
     //   z: calculatorRef.current.children[20].position.z - 50,
     // });
   }, []);
+
 
   return (
     <>
